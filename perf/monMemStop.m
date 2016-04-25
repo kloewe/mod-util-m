@@ -7,6 +7,8 @@ function mem = monMemStop(varargin)
 %
 %   Author: Kristian Loewe
 
+assert(isunix, 'OS not supported.');
+
 unit = 'b';
 assert(nargin <= 1);
 if nargin == 1

@@ -7,6 +7,8 @@ function monMemStart
 %
 %   Author: Kristian Loewe
 
+assert(isunix, 'OS not supported.');
+
 pid = feature('getpid');
 system(['touch /tmp/monMem_',sprintf('%d',pid)]);
 
