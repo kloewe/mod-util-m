@@ -63,6 +63,7 @@ end
 axHndls(remidx) = [];
 
 % find the axes below the mouse pointer position (if any)
+found = false;
 for i = 1:numel(axHndls)
   ha = axHndls(i);                    % axes handle
   apos = getpixelposition(ha);        % axes position
