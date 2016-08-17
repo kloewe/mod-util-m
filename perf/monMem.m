@@ -26,8 +26,8 @@ function varargout = monMem(op,unit)
 %
 %   Author: Kristian Loewe
 
-persistent pidm;
-persistent fname;
+persistent pidm;    % Matlab's pid
+persistent fname;   % filename
 
 switch op
   case 'start'
@@ -84,13 +84,13 @@ switch op
       unit = 'b';
     end
     switch unit
-      case 'b'                      % bytes
+      case 'b'             % bytes
 
-      case 'k'                      % kilobytes
+      case 'k'             % kilobytes
         mem = mem./1024;
-      case 'm'                      % megabytes
+      case 'm'             % megabytes
         mem = mem./1024^2;
-      case 'g'                      % gigabytes
+      case 'g'             % gigabytes
         mem = mem./1024^3;
       otherwise
         error('Unexpected input argument');

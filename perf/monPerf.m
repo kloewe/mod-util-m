@@ -28,9 +28,9 @@ switch op
   case 'start'
     assert(isunix, 'OS not supported.');
     assert(nargin == 2, 'Unexpected number of input arguments.');
-    assert(ischar(event));
-    [rc,~] = system('which perf');
-    assert(~rc, 'perf not found.');
+    assert(ischar(event), 'Unexpected input argument.');
+    [rc,msg] = system('which perf');
+    assert(~rc, 'perf not found.\n%s', msg);
 
     pidm = feature('getpid');
     fname = ['/tmp/monPerf_',sprintf('%d',pidm),'_perf-stats'];
@@ -38,10 +38,10 @@ switch op
     evt = event;
 
     % start monitoring
-    [rc,~] = system([...
+    [rc,msg] = system([...
       'perf stat -e ' evt ' -p ' sprintf('%d', pidm) ...
       ' > ' fname ' 2>&1 & echo $! > ' fname '-pid']);
-    assert(~rc, 'Could not start perf.');
+    assert(~rc, 'Could not start perf.\n%s', msg);
     pidp = importdata([fname '-pid']);
     delete([fname '-pid']);
     assert(~isempty(pidp), 'Could not retrieve perf''s pid');
@@ -62,10 +62,12 @@ switch op
     [rc,~] = system(['cat ' fname ' | grep "not counted"']);
     assert(rc == 1, 'Not counted.');
     [rc,c] = system(['cat ' fname ' | grep "' evt '" | awk ''{print $1}''']);
-    assert(~rc, 'Could not read data from file %s', fname);
+    assert(~rc, 'Could not read data from file %s\n%s', fname, c);
     delete(fname);
     c = str2double(c);
     assert(~isnan(c));
+    
+    % assign output
     varargout{1} = c;
     
     % clear persistent variables
