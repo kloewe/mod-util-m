@@ -1,4 +1,4 @@
-function d = readImgData(fname,varargin)
+function d = readImgData(fname)
 %READIMGDATA Read neuroimaging data.
 %
 %   I = READIMGDATA(FILENAME)
