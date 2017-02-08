@@ -31,7 +31,7 @@ else
   nhdr.fname = fname;
 end
 nhdr.dim = size(data);
-assert(isequal(nhdr.dim, hdr.dim));
+assert(isequal(nhdr.dim, hdr.dim), 'Dimension mismatch');
 nhdr.mat = hdr.mat;
 nhdr.pinfo = [1 0 0]';
 
