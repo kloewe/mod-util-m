@@ -12,7 +12,7 @@ function d = readImgData(fname,varargin)
 
 % expand potential wildcards
 fnameExp = dir(fullfile(fileGetDir(fname), fileGetName(fname)));
-assert(~isempty(fnameExp), 'File not found.');
+assert(~isempty(fnameExp), 'File not found: %s\n', fname);
 fname = fullfile(fileGetDir(fname), fnameExp.name);
 
 if fileExists(fname)
