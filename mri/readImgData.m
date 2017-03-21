@@ -13,33 +13,31 @@ function d = readImgData(fname)
 %   Author: Kristian Loewe
 
 % expand potential wildcards
-fnameExp = dir(fullfile(fileGetDir(fname), fileGetName(fname)));
-assert(~isempty(fnameExp), 'File not found: %s\n', fname);
-fname = fullfile(fileGetDir(fname), fnameExp.name);
+fnameExp = fileGlob(fname);
+assert(~isempty(fnameExp), 'File not found: %s', fname);
+assert(isscalar(fnameExp), 'More than one file found: %s', fname);
+fname = fnameExp{1};
 
-if fileExists(fname)
-  if strcmp(fileGetExt(fname), '.gz') ...    % .nii.gz
-      && strcmp(fileGetExt(fileGetName(fname,0)), '.nii')
-    tmpfilename = ['/tmp/kl_',num2str(round(rand(1)*100000)),'.nii'];
-    system(['gzip -cd ', fname, ' > ', tmpfilename]);
-    d = spm_read_vols(spm_vol(tmpfilename));
-    system(['rm ', tmpfilename]);
-  else
-    switch fileGetExt(fname)
-      case '.mat'                            % .mat
-        tmp = load(fname);
-        fieldsOfStruct = fieldnames(tmp);
-        d = tmp.(fieldsOfStruct{1});
-      case {'.img','.hdr','.nii'}            % .img | .hdr | .nii
-        d = spm_read_vols(spm_vol(fname));
-      case {'.mif','.mih'}
-        d = read_mrtrix(fname);              % .mif | .mih
-        d = d.data;
-      otherwise
-        error(['Unsupported filename extension: ', fileGetExt(fname)]);
-    end
-  end
+if strcmp(fileGetExt(fname), '.gz') ...    % .nii.gz
+    && strcmp(fileGetExt(fileGetName(fname,0)), '.nii')
+  tmpfilename = ['/tmp/kl_',num2str(round(rand(1)*100000)),'.nii'];
+  system(['gzip -cd ', fname, ' > ', tmpfilename]);
+  d = spm_read_vols(spm_vol(tmpfilename));
+  system(['rm ', tmpfilename]);
 else
-  error(['File not found: ', fname]);
+  switch fileGetExt(fname)
+    case '.mat'                            % .mat
+      tmp = load(fname);
+      fieldsOfStruct = fieldnames(tmp);
+      d = tmp.(fieldsOfStruct{1});
+    case {'.img','.hdr','.nii'}            % .img | .hdr | .nii
+      d = spm_read_vols(spm_vol(fname));
+    case {'.mif','.mih'}
+      d = read_mrtrix(fname);              % .mif | .mih
+      d = d.data;
+    otherwise
+      error(['Unsupported filename extension: ', fileGetExt(fname)]);
+  end
 end
+
 end
