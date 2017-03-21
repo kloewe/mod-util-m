@@ -18,14 +18,20 @@ assert(~isempty(fnameExp), 'File not found: %s', fname);
 assert(isscalar(fnameExp), 'More than one file found: %s', fname);
 fname = fnameExp{1};
 
-if strcmp(fileGetExt(fname), '.gz') ...    % .nii.gz
-    && strcmp(fileGetExt(fileGetName(fname,0)), '.nii')
-  tmpfilename = ['/tmp/kl_',num2str(round(rand(1)*100000)),'.nii'];
+if strcmp(fileGetExt(fname), '.gz')        % .nii.gz | .mif.gz
+  ext = fileGetExt(fileGetName(fname,0));
+  assert(ismember(ext, {'.nii','.mif'}), ...
+    'Unsupported filename extension: %s%s', ext, '.gz');
+
+  tmpfilename = ['/tmp/kl_', num2str(round(rand(1)*100000)), ext];
   [rc,msg] = system(['gzip -cd ', fname, ' > ', tmpfilename]);
   assert(~rc, '%s', msg);
-  d = spm_read_vols(spm_vol(tmpfilename));
+
+  d = readImgData(tmpfilename);
+
   [rc,msg] = system(['rm ', tmpfilename]);
   assert(~rc, '%s', msg);
+
 else
   switch fileGetExt(fname)
     case '.mat'                            % .mat
