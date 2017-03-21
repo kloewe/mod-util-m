@@ -3,8 +3,10 @@ function d = readImgData(fname)
 %
 %   I = READIMGDATA(FILENAME)
 %
-%   This function depends on SPM, which can be obtained
-%   from http://www.fil.ion.ucl.ac.uk/spm/.
+%   Optional dependencies:
+%
+%     SPM      http://www.fil.ion.ucl.ac.uk/spm
+%     MRtrix3  http://www.mrtrix.org
 %
 %   See also: READIMGHDR, WRITEIMGDATA.
 %
@@ -16,7 +18,7 @@ assert(~isempty(fnameExp), 'File not found: %s\n', fname);
 fname = fullfile(fileGetDir(fname), fnameExp.name);
 
 if fileExists(fname)
-  if strcmp(fileGetExt(fname), '.gz') ...     % .nii.gz
+  if strcmp(fileGetExt(fname), '.gz') ...    % .nii.gz
       && strcmp(fileGetExt(fileGetName(fname,0)), '.nii')
     tmpfilename = ['/tmp/kl_',num2str(round(rand(1)*100000)),'.nii'];
     system(['gzip -cd ', fname, ' > ', tmpfilename]);
@@ -30,6 +32,9 @@ if fileExists(fname)
         d = tmp.(fieldsOfStruct{1});
       case {'.img','.hdr','.nii'}            % .img | .hdr | .nii
         d = spm_read_vols(spm_vol(fname));
+      case {'.mif','.mih'}
+        d = read_mrtrix(fname);              % .mif | .mih
+        d = d.data;
       otherwise
         error(['Unsupported filename extension: ', fileGetExt(fname)]);
     end
