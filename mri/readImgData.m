@@ -21,9 +21,11 @@ fname = fnameExp{1};
 if strcmp(fileGetExt(fname), '.gz') ...    % .nii.gz
     && strcmp(fileGetExt(fileGetName(fname,0)), '.nii')
   tmpfilename = ['/tmp/kl_',num2str(round(rand(1)*100000)),'.nii'];
-  system(['gzip -cd ', fname, ' > ', tmpfilename]);
+  [rc,msg] = system(['gzip -cd ', fname, ' > ', tmpfilename]);
+  assert(~rc, '%s', msg);
   d = spm_read_vols(spm_vol(tmpfilename));
-  system(['rm ', tmpfilename]);
+  [rc,msg] = system(['rm ', tmpfilename]);
+  assert(~rc, '%s', msg);
 else
   switch fileGetExt(fname)
     case '.mat'                            % .mat
@@ -36,7 +38,7 @@ else
       d = read_mrtrix(fname);              % .mif | .mih
       d = d.data;
     otherwise
-      error(['Unsupported filename extension: ', fileGetExt(fname)]);
+      error('Unsupported filename extension: %s', fileGetExt(fname));
   end
 end
 

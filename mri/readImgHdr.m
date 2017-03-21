@@ -18,14 +18,15 @@ assert(~isempty(fnameExp), 'File not found: %s', fname);
 assert(isscalar(fnameExp), 'More than one file found: %s', fname);
 fname = fnameExp{1};
 
-
 if strcmp(fileGetExt(fname), '.gz') ...    % .nii.gz
     && strcmp(fileGetExt(fileGetName(fname,0)), '.nii')
   tmpfilename = ['/tmp/kl_',num2str(round(rand(1)*100000)),'.nii'];
-  system(['gzip -cd ', fname, ' > ', tmpfilename]);
+  [rc,msg] = system(['gzip -cd ', fname, ' > ', tmpfilename]);
+  assert(~rc, '%s', msg);
   hdr = spm_vol(tmpfilename);
   hdr.fname = fname;
-  system(['rm ', tmpfilename]);
+  [rc,msg] = system(['rm ', tmpfilename]);
+  assert(~rc, '%s', msg);
 else
   switch fileGetExt(fname)
     case {'.img','.hdr','.nii'}            % .img | .hdr | .nii
@@ -34,7 +35,7 @@ else
       hdr = read_mrtrix(fname);            % .mif | .mih
       hdr = rmfield(hdr, 'data');
     otherwise
-      error(['Unsupported filename extension: ', fileGetExt(fname)]);
+      error('Unsupported filename extension: %s', fileGetExt(fname));
   end
 end
 
