@@ -1,4 +1,4 @@
-function data = rescaleData(data,rout,rin)
+function data = rescaleData(data,rout,varargin)
 %RESCALEDATA Rescale (linearly transform) data to the specified range.
 %
 %   Usage: out = rescaleData(data,rout)
@@ -24,8 +24,27 @@ assert(numel(rout) == 2);
 dtype = class(data);
 assert(ismember(dtype, {'single','double'}));
 
-if all(isnan(data(:)))
-  return;
+skipChecks = false;
+
+if mod(numel(varargin),2) == 1
+  rin = varargin{1};
+  varargin = varargin(2:end);
+end
+
+for iParam = 1:2:numel(varargin)
+  pn = varargin{iParam};   % parameter name
+  assert(ischar(pn), 'Parameter names must be of type char.');
+  pv = varargin{iParam+1}; % parameter value
+   switch pn
+    case 'SkipChecks'
+      skipChecks = logical(pv);
+    otherwise
+      error('Unexpected parameter name %s.', pn);
+  end
+end
+
+if ~skipChecks && all(isnan(data(:)))
+    return;
 end
 
 if strcmp(dtype, 'single')
@@ -39,15 +58,20 @@ else
   if strcmp(dtype, 'single')
     rin = single(rin);
   end
-  if ~isnan(rin(1))
-    assert(rin(1) <= nanmin(data(:)));
-  else
+  
+  if isnan(rin(1))
     rin(1) = nanmin(data(:));
-  end
-  if ~isnan(rin(2))
-    assert(rin(2) >= nanmax(data(:)));
   else
+    if ~skipChecks
+      assert(rin(1) <= nanmin(data(:)));
+    end
+  end
+  if isnan(rin(2))
     rin(2) = nanmax(data(:));
+  else
+    if ~skipChecks
+      assert(rin(2) >= nanmax(data(:)));
+    end
   end
 end
 
