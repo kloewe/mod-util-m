@@ -20,13 +20,18 @@ fname = fnameExp{1};
 
 if strcmp(fileGetExt(fname), '.gz') ...    % .nii.gz
     && strcmp(fileGetExt(fileGetName(fname,0)), '.nii')
+  assert(isunix || ismac, '.*.gz is not supported on this OS.');
+
   tmpfilename = ['/tmp/kl_',num2str(round(rand(1)*100000)),'.nii'];
   [rc,msg] = system(['gzip -cd ', fname, ' > ', tmpfilename]);
   assert(~rc, '%s', msg);
+
   hdr = spm_vol(tmpfilename);
   hdr.fname = fname;
+
   [rc,msg] = system(['rm ', tmpfilename]);
   assert(~rc, '%s', msg);
+
 else
   switch fileGetExt(fname)
     case {'.img','.hdr','.nii'}            % .img | .hdr | .nii

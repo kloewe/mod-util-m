@@ -19,6 +19,8 @@ assert(isscalar(fnameExp), 'More than one file found: %s', fname);
 fname = fnameExp{1};
 
 if strcmp(fileGetExt(fname), '.gz')        % .nii.gz | .mif.gz
+  assert(isunix || ismac, '.*.gz is not supported on this OS.');
+
   ext = fileGetExt(fileGetName(fname,0));
   assert(ismember(ext, {'.nii','.mif'}), ...
     'Unsupported filename extension: %s%s', ext, '.gz');
