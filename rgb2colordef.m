@@ -18,7 +18,7 @@ function rgb2colordef(rgb,cmapname,fname)
 %
 %   Author: Kristian Loewe
 
-assert(ismatrix(rgb) && size(rgb,2) == 3);
+assert(ismatrix(rgb) && size(rgb,1) > 0 && size(rgb,2) == 3);
 
 rgb = round(rescaleData(rgb, [0 255], [0 1]));
 
