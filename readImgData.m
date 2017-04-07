@@ -12,6 +12,12 @@ function d = readImgData(fname)
 %
 %   Author: Kristian Loewe
 
+if iscell(fname) && isscalar(fname)
+  fname = fname{1};
+end
+
+assert(ischar(fname), 'Unexpected input type.');
+
 % expand potential wildcards
 fnameExp = fileGlob(fname);
 assert(~isempty(fnameExp), 'File not found: %s', fname);
