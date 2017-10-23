@@ -28,8 +28,23 @@ if strcmp(fileGetExt(fname), '.gz') ...    % .nii.gz
     && strcmp(fileGetExt(fileGetName(fname,0)), '.nii')
   assert(isunix || ismac, '.*.gz is not supported on this OS.');
 
-  tmpfilename = ['/tmp/kl_',num2str(round(rand(1)*100000)),'.nii'];
-  [rc,msg] = system(['gzip -cd ', fname, ' > ', tmpfilename]);
+  ext = fileGetExt(fileGetName(fname,0));
+  assert(ismember(ext, {'.nii'}), ...
+    'Unsupported filename extension: %s%s', ext, '.gz');
+
+  while true
+    tmpfilename = [tempname, ext];
+    if ~fileExists(tmpfilename)
+      break;
+    end
+  end
+
+  [rc,msg] = system('which pigz');
+  if ~rc
+    [rc,msg] = system(['pigz -cd ', fname, ' > ', tmpfilename]);
+  else
+    [rc,msg] = system(['gzip -cd ', fname, ' > ', tmpfilename]);
+  end
   assert(~rc, '%s', msg);
 
   hdr = spm_vol(tmpfilename);

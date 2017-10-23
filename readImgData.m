@@ -31,8 +31,19 @@ if strcmp(fileGetExt(fname), '.gz')        % .nii.gz | .mif.gz
   assert(ismember(ext, {'.nii','.mif'}), ...
     'Unsupported filename extension: %s%s', ext, '.gz');
 
-  tmpfilename = ['/tmp/kl_', num2str(round(rand(1)*100000)), ext];
-  [rc,msg] = system(['gzip -cd ', fname, ' > ', tmpfilename]);
+  while true
+    tmpfilename = [tempname, ext];
+    if ~fileExists(tmpfilename)
+      break;
+    end
+  end
+
+  [rc,msg] = system('which pigz');
+  if ~rc
+    [rc,msg] = system(['pigz -cd ', fname, ' > ', tmpfilename]);
+  else
+    [rc,msg] = system(['gzip -cd ', fname, ' > ', tmpfilename]);
+  end
   assert(~rc, '%s', msg);
 
   d = readImgData(tmpfilename);
