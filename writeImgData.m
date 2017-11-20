@@ -35,6 +35,9 @@ assert(isequal(nhdr.dim, hdr.dim), 'Dimension mismatch');
 nhdr.mat = hdr.mat;
 nhdr.pinfo = [1 0 0]';
 
+if islogical(data)
+  data = uint8(data);
+end
 dtype = class(data);
 switch dtype
   case {'uint8', 'int16', 'int32', 'int8', 'uint16', 'uint32'}
