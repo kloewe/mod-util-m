@@ -56,7 +56,7 @@ cd(outdir);
 spm_write_vol(nhdr, data);
 cd(thisdir);
 if doCompress
-  [s,r] = system(['gzip ', fullfile(outdir,fname(1:end-3))]);
+  [s,r] = system(['gzip -f ', fullfile(outdir,fname(1:end-3))]);
 end
 
 end
