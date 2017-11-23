@@ -16,7 +16,8 @@ if iscell(fname) && isscalar(fname)
   fname = fname{1};
 end
 
-assert(ischar(fname), 'Unexpected input type.');
+assert(ischar(fname), ...
+  'Unexpected input type: ''fname'' must be of type char.');
 
 % expand potential wildcards
 fnameExp = fileGlob(fname);

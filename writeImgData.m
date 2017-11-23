@@ -10,19 +10,30 @@ function writeImgData(data,fname,hdr)
 %
 %   Author: Kristian Loewe
 
+if iscell(fname) && isscalar(fname)
+  fname = fname{1};
+end
+
+assert(ischar(fname), ...
+  'Unexpected input type: ''fname'' must be of type char.');
+
 doCompress = 0;
 
 outdir = fileGetDir(fname);
 if isempty(outdir)
   outdir = pwd;
 end
+
 fname = fileGetName(fname);
+
 ext = fileGetExt(fname);
-if strcmp(ext,'.gz')
+if strcmp(ext, '.gz')
+  assert(isunix || ismac, '.*.gz is not supported on this OS.');
   doCompress = 1;
   ext = fileGetExt(fileGetName(fname,0));
 end
-assert(strcmp(ext,'.nii'), 'Unsupported filename extension');
+assert(strcmp(ext,'.nii'), ...
+  'Unsupported filename extension: %s%s', ext, '.gz');
 
 nhdr = struct();
 if doCompress
