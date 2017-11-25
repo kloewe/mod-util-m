@@ -20,6 +20,7 @@ function data = rescaleData(data,rout,varargin)
 %
 %   Author: Kristian Loewe
 
+assert(~isscalar(data), 'Cannot rescale: more than one value is needed.');
 assert(numel(rout) == 2);
 dtype = class(data);
 assert(ismember(dtype, {'single','double'}));
