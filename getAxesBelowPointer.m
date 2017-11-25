@@ -55,7 +55,7 @@ mpp = get(hf, 'CurrentPoint');        % the mpp is given wrt the figure HF
 % get rid of those axes that HF doesn't contain
 remidx = false(size(axHndls));        % reduce axes to those that are in the 
 for i = 1:numel(axHndls)              % that an axes may be a child of a
-  h = findparentfig(axHndls(i));      % panel that is a child of the
+  h = getParentFigure(axHndls(i));    % panel that is a child of the
   if ~isequal(h,hf)                   % relevant figure etc.
     remidx(i) = true;
   end
@@ -90,15 +90,4 @@ if ~found
   ha = [];
 end
 
-end
-
-
-function h = findparentfig(h)
-% find parent figure
-
-  while h ~= 0
-    ph = h;
-    h = get(h, 'Parent');
-  end
-  h = ph;
 end
