@@ -48,6 +48,11 @@ if ~skipChecks && all(isnan(data(:)))
   return;
 end
 
+if ~skipChecks && any(isinf(data(:)))
+  error('Cannot rescale with -Inf or Inf values present.');
+end
+
+
 if strcmp(dtype, 'single')
   rout = single(rout);
 end
