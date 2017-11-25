@@ -44,7 +44,8 @@ for iParam = 1:2:numel(varargin)
 end
 
 if ~skipChecks && all(isnan(data(:)))
-    return;
+  warning('No non-NaN values found.');
+  return;
 end
 
 if strcmp(dtype, 'single')
